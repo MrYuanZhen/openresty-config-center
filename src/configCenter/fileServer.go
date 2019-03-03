@@ -36,6 +36,8 @@ var temps = map[string]temp{
 func main() {
 	//绑定路由 如果访问 /upload 调用 Handler 方法
 	http.HandleFunc("/upload", Handler)
+	http.HandleFunc("/check", checkNginx)
+	http.HandleFunc("/reload", startNginx)
 	//使用 tcp 协议监听8888
 	http.ListenAndServe(":8888", nil)
 }
@@ -116,8 +118,6 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 		upl, _ := json.Marshal(js)
 		fmt.Fprintln(w, string(upl))
 
-		checkNginx()
-
 	} else { //如果有其他方式进行页面调用。http Status Code 500
 		w.WriteHeader(500)
 		fmt.Fprintln(w, "不支持这种调用方式!")
@@ -125,7 +125,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func checkNginx() {
+func checkNginx(c http.ResponseWriter, req *http.Request) {
 	check := exec.Command("/usr/local/openresty/nginx/sbin/nginx", "-t")
 	out, err := check.CombinedOutput()
 	if err != nil {
@@ -140,7 +140,7 @@ func checkNginx() {
 		js["type"] = status
 		js["msg"] = "检测通过"
 		res, _ := json.Marshal(js)
-		fmt.Println(string(res))
+		fmt.Fprintln(c, string(res))
 
 	} else {
 		js := make(map[string]interface{})
@@ -148,7 +148,37 @@ func checkNginx() {
 		js["type"] = status
 		js["msg"] = "检测失败"
 		res, _ := json.Marshal(js)
-		fmt.Println(string(res))
+		fmt.Fprintln(c, string(res))
+	}
+
+}
+
+
+func startNginx(s http.ResponseWriter, req *http.Request) {
+	check := exec.Command("/usr/local/openresty/nginx/sbin/nginx", "-s", "reload")
+	out, err := check.CombinedOutput()
+	fmt.Printf(string(out))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var status bool = strings.Contains(string(out), "started")
+
+	if status == true {
+		js := make(map[string]interface{})
+		js["status"] = 200
+		js["type"] = status
+		js["msg"] = "重加载成功"
+		res, _ := json.Marshal(js)
+		fmt.Fprintln(s, string(res))
+
+	} else {
+		js := make(map[string]interface{})
+		js["status"] = 500
+		js["type"] = status
+		js["msg"] = "重加载失败"
+		res, _ := json.Marshal(js)
+		fmt.Fprintln(s, string(res))
 	}
 
 }
