@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/satori/go.uuid"
 	"io"
 	"net/http"
 	"os"
@@ -33,11 +34,18 @@ var temps = map[string]temp{
 //config-lua：主要配置一些防御规则开关，主要修改防御CC规则,文件名规定为config.lua，Type规定为config-lua，生产环境路径为/usr/local/openresty/lualib/resty/upstream/；
 //filebeat-yaml：日志filebeat配置文件，文件名规定为filebeat.yaml，Type规定为filebeat-yaml，生产环境路径为/opt/filebeat/;
 
+type resultTemp struct {
+	code   string
+	status string
+	action string
+}
+
+var uuidMap = map[string]resultTemp{};
+
 func main() {
 	//绑定路由 如果访问 /upload 调用 Handler 方法
 	http.HandleFunc("/upload", Handler)
-	http.HandleFunc("/check", checkNginx)
-	http.HandleFunc("/reload", startNginx)
+	http.HandleFunc("/checkAction", checkAction)
 	//使用 tcp 协议监听8888
 	http.ListenAndServe(":8888", nil)
 }
@@ -110,11 +118,19 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 		defer f.Close()
 		defer file.Close()
 
+		// 创建uuid
+		uu := uuid.Must(uuid.NewV4()).String()
+		uuidMap[uu] = resultTemp{uu, "init", ""}
+
+		// todo one thread
+		afterUpload(uu);
+
 		//返回上传结果
 		js := make(map[string]interface{})
-		js["status"] = 200
-		js["type"] = true
-		js["msg"] = "上传成功"
+		js["code"] = uu
+		js["stats"] = 200
+		js["status"] = uuidMap[uu].status
+		js["action"] = uuidMap[uu].action
 		upl, _ := json.Marshal(js)
 		fmt.Fprintln(w, string(upl))
 
@@ -125,7 +141,8 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func checkNginx(c http.ResponseWriter, req *http.Request) {
+func afterUpload(uu string) {
+	uuidMap[uu] = resultTemp{uu, "doing", "check"}
 	check := exec.Command("/usr/local/openresty/nginx/sbin/nginx", "-t")
 	out, err := check.CombinedOutput()
 	if err != nil {
@@ -135,50 +152,38 @@ func checkNginx(c http.ResponseWriter, req *http.Request) {
 	var status bool = strings.Contains(string(out), "successful")
 
 	if status == true {
-		js := make(map[string]interface{})
-		js["status"] = 200
-		js["type"] = status
-		js["msg"] = "检测通过"
-		res, _ := json.Marshal(js)
-		fmt.Fprintln(c, string(res))
+		uuidMap[uu] = resultTemp{uu, "doing", "rebot"}
+		check := exec.Command("/usr/local/openresty/nginx/sbin/nginx", "-s", "reload")
+		out, err := check.CombinedOutput()
+		fmt.Printf(string(out))
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		var status bool = strings.Contains(string(out), "started")
+
+		if status == true {
+			uuidMap[uu] = resultTemp{uu, "success", "rebot"}
+		} else {
+			uuidMap[uu] = resultTemp{uu, "failure", "rebot"}
+		}
 
 	} else {
-		js := make(map[string]interface{})
-		js["status"] = 500
-		js["type"] = status
-		js["msg"] = "检测失败"
-		res, _ := json.Marshal(js)
-		fmt.Fprintln(c, string(res))
+		uuidMap[uu] = resultTemp{uu, "failure", "check"}
+		return
 	}
 
 }
 
+func checkAction(c http.ResponseWriter, req *http.Request) {
 
-func startNginx(s http.ResponseWriter, req *http.Request) {
-	check := exec.Command("/usr/local/openresty/nginx/sbin/nginx", "-s", "reload")
-	out, err := check.CombinedOutput()
-	fmt.Printf(string(out))
-	if err != nil {
-		fmt.Println(err)
-	}
+	code := req.FormValue("code")
 
-	var status bool = strings.Contains(string(out), "started")
-
-	if status == true {
-		js := make(map[string]interface{})
-		js["status"] = 200
-		js["type"] = status
-		js["msg"] = "重加载成功"
-		res, _ := json.Marshal(js)
-		fmt.Fprintln(s, string(res))
-
-	} else {
-		js := make(map[string]interface{})
-		js["status"] = 500
-		js["type"] = status
-		js["msg"] = "重加载失败"
-		res, _ := json.Marshal(js)
-		fmt.Fprintln(s, string(res))
-	}
+	js := make(map[string]interface{})
+	js["code"] = code
+	js["status"] = uuidMap[code].status
+	js["sction"] = uuidMap[code].action
+	upl, _ := json.Marshal(js)
+	fmt.Fprintln(c, string(upl))
 
 }

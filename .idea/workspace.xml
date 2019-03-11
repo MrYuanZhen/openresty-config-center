@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a28f4abf-9008-4373-83de-f104e9481751" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../../.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../.idea/go.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../pkg/github.com/gin-gonic/gin.a" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../pkg/github.com/howeyc/fsnotify.a" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fileServer.go" beforeDir="false" afterPath="$PROJECT_DIR$/fileServer.go" afterDir="false" />
+    <list default="true" id="d576d7cd-fb0d-4fb3-abc5-a608d430175e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/configCenter/fileServer.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/configCenter/fileServer.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,10 +13,13 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/fileServer.go">
+        <entry file="file://$PROJECT_DIR$/src/configCenter/fileServer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="111" selection-start-line="111" selection-end-line="111" />
+            <state relative-caret-position="2235">
+              <caret line="149" column="34" lean-forward="true" selection-start-line="149" selection-start-column="34" selection-end-line="149" selection-end-column="34" />
+              <folding>
+                <element signature="e#15#67#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -43,21 +35,29 @@
   </component>
   <component name="GOROOT" path="/usr/local/go" />
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GoLibraries">
+    <option name="urls">
+      <list>
+        <option value="file://$PROJECT_DIR$" />
+      </list>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$USER_HOME$/文档/project/go/src/github.com/howeyc/fsnotify/fsnotify_linux.go" />
-        <option value="$PROJECT_DIR$/fileCopy.go" />
-        <option value="$PROJECT_DIR$/fileServer.go" />
+        <option value="$PROJECT_DIR$/src/configCenter/fileCopy.go" />
+        <option value="$PROJECT_DIR$/src/configCenter/execCmd.go" />
+        <option value="$PROJECT_DIR$/src/configCenter/check_nginx.go" />
+        <option value="$PROJECT_DIR$/src/configCenter/fileServer.go" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="324" />
-    <option name="y" value="27" />
-    <option name="width" value="1390" />
+    <option name="x" value="260" />
+    <option name="y" value="33" />
+    <option name="width" value="1400" />
     <option name="height" value="1000" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -70,7 +70,18 @@
         <subPane>
           <expand>
             <path>
-              <item name="configCenter" type="b2602c69:ProjectViewProjectNode" />
+              <item name="go" type="b2602c69:ProjectViewProjectNode" />
+              <item name="go" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="go" type="b2602c69:ProjectViewProjectNode" />
+              <item name="go" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="go" type="b2602c69:ProjectViewProjectNode" />
+              <item name="go" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="configCenter" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -83,9 +94,11 @@
   <component name="PropertiesComponent">
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
+    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
-    <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -99,27 +112,18 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build fileServer.go">
-    <configuration name="go build fileCopy.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="configCenter" />
-      <working_directory value="$PROJECT_DIR$/" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/fileCopy.go" />
-      <directory value="$PROJECT_DIR$/" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager">
     <configuration name="go build fileServer.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="configCenter" />
+      <module name="go" />
       <working_directory value="$PROJECT_DIR$/" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/fileServer.go" />
+      <filePath value="$PROJECT_DIR$/src/configCenter/fileServer.go" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.go build fileServer.go" />
-        <item itemvalue="Go Build.go build fileCopy.go" />
       </list>
     </recent_temporary>
   </component>
@@ -127,20 +131,20 @@
     <frame x="0" y="25" width="1920" height="1008" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19123931" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18696581" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32954547" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.22045454" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.16022727" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32915717" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3997722" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.32954547" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -152,46 +156,41 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///usr/local/go/src/net/http/request.go">
+    <entry file="file://$PROJECT_DIR$/src/configCenter/fileCopy.go" />
+    <entry file="file://$PROJECT_DIR$/src/configCenter/execCmd.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="856">
-          <caret line="1307" selection-start-line="1307" selection-end-line="1307" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/go/src/net/http/server.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="1994" selection-start-line="1994" selection-end-line="1994" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/go/src/fmt/print.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="346">
-          <caret line="273" selection-start-line="273" selection-end-line="273" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/文档/project/go/src/github.com/howeyc/fsnotify/fsnotify_linux.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="284" selection-start-line="284" selection-end-line="284" />
+        <state relative-caret-position="105">
+          <caret line="7" selection-start-line="7" selection-end-line="14" selection-end-column="1" />
+          <folding>
+            <element signature="e#15#43#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file:///usr/local/go/src/runtime/proc.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
+        <state relative-caret-position="467">
           <caret line="208" selection-start-line="208" selection-end-line="208" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fileCopy.go" />
-    <entry file="file://$PROJECT_DIR$/fileServer.go">
+    <entry file="file://$PROJECT_DIR$/src/configCenter/check_nginx.go">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file:///usr/local/go/src/net/http/server.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="111" selection-start-line="111" selection-end-line="111" />
+        <state relative-caret-position="165">
+          <caret line="1995" selection-start-line="1995" selection-end-line="1995" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/configCenter/fileServer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2235">
+          <caret line="149" column="34" lean-forward="true" selection-start-line="149" selection-start-column="34" selection-end-line="149" selection-end-column="34" />
+          <folding>
+            <element signature="e#15#67#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
