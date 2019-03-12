@@ -1,20 +1,27 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/satori/go.uuid"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
+	"unsafe"
 )
 
 type temp struct {
 	fileName string
 	fileType string
 	content  string
+}
+
+type JsonPostSample struct {
 }
 
 var temps = map[string]temp{
@@ -45,12 +52,18 @@ var uuidMap = map[string]resultTemp{};
 func main() {
 	//绑定路由 如果访问 /upload 调用 Handler 方法
 	http.HandleFunc("/upload", Handler)
-	http.HandleFunc("/checkAction", checkAction)
 	//使用 tcp 协议监听8888
 	http.ListenAndServe(":8888", nil)
 }
 
 func Handler(w http.ResponseWriter, req *http.Request) {
+	// 创建uuid
+	uu := uuid.Must(uuid.NewV4()).String()
+	uuidMap[uu] = resultTemp{uu, "init", ""}
+
+	// todo one thread
+	afterUpload(uu);
+
 	//输出对应的 请求方式
 	fmt.Println(req.Method)
 	//判断对应的请求来源。如果为get 显示对应的页面
@@ -64,6 +77,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 
 		if file_err != nil {
 			js := make(map[string]interface{})
+			js["code"] = uu
 			js["status"] = 500
 			js["type"] = false
 			js["msg"] = file_err
@@ -74,6 +88,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 
 		if _, ok := temps[fileType]; !ok {
 			js := make(map[string]interface{})
+			js["code"] = uu
 			js["status"] = 500
 			js["type"] = false
 			js["msg"] = "fileTpye_err"
@@ -84,6 +99,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 
 		if file_head.Filename != temps[fileType].fileName {
 			js := make(map[string]interface{})
+			js["code"] = uu
 			js["status"] = 500
 			js["type"] = false
 			js["msg"] = "fileName_err"
@@ -98,6 +114,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 		if f_err != nil {
 			fmt.Fprintf(w, "file open fail:%s", f_err)
 			js := make(map[string]interface{})
+			js["code"] = uu
 			js["status"] = 500
 			js["type"] = false
 			js["msg"] = f_err
@@ -108,6 +125,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 		_, copy_err := io.Copy(f, file)
 		if copy_err != nil {
 			js := make(map[string]interface{})
+			js["code"] = uu
 			js["status"] = 500
 			js["type"] = false
 			js["msg"] = copy_err
@@ -118,21 +136,50 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 		defer f.Close()
 		defer file.Close()
 
-		// 创建uuid
-		uu := uuid.Must(uuid.NewV4()).String()
-		uuidMap[uu] = resultTemp{uu, "init", ""}
-
-		// todo one thread
-		afterUpload(uu);
-
 		//返回上传结果
 		js := make(map[string]interface{})
 		js["code"] = uu
-		js["stats"] = 200
+		js["stats_code"] = 200
 		js["status"] = uuidMap[uu].status
 		js["action"] = uuidMap[uu].action
 		upl, _ := json.Marshal(js)
 		fmt.Fprintln(w, string(upl))
+
+		if uuidMap[uu].status == "success" {
+			time.AfterFunc(3*time.Second, func() {
+				back := make(map[string]interface{})
+				back["runResult"] = "1"
+				back["id"] = uu
+				bytesData, err := json.Marshal(back)
+				if err != nil {
+					fmt.Println(err.Error())
+					return
+				}
+				reader := bytes.NewReader(bytesData)
+				url := "http://10.10.24.122:9000/api/configManage/updateState"
+				request, err := http.NewRequest("POST", url, reader)
+
+				if err != nil {
+					fmt.Println(err.Error())
+					return
+				}
+				request.Header.Set("Content-Type", "application/json;charset=UTF-8")
+				client := http.Client{}
+				resp, err := client.Do(request)
+				if err != nil {
+					fmt.Println(err.Error())
+					return
+				}
+				respBytes, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					fmt.Println(err.Error())
+					return
+				}
+				//byte数组直接转成string，优化内存
+				str := (*string)(unsafe.Pointer(&respBytes))
+				fmt.Println(*str,request)
+			})
+		}
 
 	} else { //如果有其他方式进行页面调用。http Status Code 500
 		w.WriteHeader(500)
@@ -172,18 +219,5 @@ func afterUpload(uu string) {
 		uuidMap[uu] = resultTemp{uu, "failure", "check"}
 		return
 	}
-
-}
-
-func checkAction(c http.ResponseWriter, req *http.Request) {
-
-	code := req.FormValue("code")
-
-	js := make(map[string]interface{})
-	js["code"] = code
-	js["status"] = uuidMap[code].status
-	js["sction"] = uuidMap[code].action
-	upl, _ := json.Marshal(js)
-	fmt.Fprintln(c, string(upl))
 
 }
